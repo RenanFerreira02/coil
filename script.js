@@ -43,10 +43,17 @@ const moveSnake = () => {
   snake.pop();
 };
 
-drawBoard();
-
-// Por enquanto, cada clique em Começar é um passo
-startButton.addEventListener('click', () => {
+// O game loop: anda, desenha e pede ao navegador para rodar de novo no próximo quadro
+const gameLoop = () => {
   moveSnake();
   drawBoard();
+  requestAnimationFrame(gameLoop);
+};
+
+drawBoard();
+
+// Começar liga o loop uma vez só
+startButton.addEventListener('click', () => {
+  startButton.disabled = true;
+  requestAnimationFrame(gameLoop);
 });
