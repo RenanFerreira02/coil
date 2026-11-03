@@ -35,6 +35,9 @@ let snake = createSnake();
 // Para onde a cobra anda: começa indo uma casa para a direita a cada passo
 let direction = { x: 1, y: 0 };
 
+// A direção pedida pelo teclado, que só vale no próximo passo
+let nextDirection = direction;
+
 // Cada tecla aponta para uma direção. No canvas, o y cresce para baixo
 const directions = {
   arrowup: { x: 0, y: -1 },
@@ -119,6 +122,9 @@ const drawBoard = () => {
 
 // Um passo: nasce uma cabeça nova na frente, e a ponta da cauda sai
 const moveSnake = () => {
+  // A direção pedida passa a valer agora, uma vez por passo
+  direction = nextDirection;
+
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
   // A cabeça nova sairia do tabuleiro ou cairia no corpo: a cobra bateu
@@ -167,6 +173,7 @@ const endGame = () => {
 const startGame = () => {
   snake = createSnake();
   direction = { x: 1, y: 0 };
+  nextDirection = direction;
   food = placeFood();
   points = 0;
   pointsValue.textContent = points;
@@ -191,5 +198,13 @@ document.addEventListener('keydown', (event) => {
 
   // As setas também rolam a página; aqui elas só guiam a cobra
   event.preventDefault();
-  direction = newDirection;
+
+  // Meia-volta: a direção oposta à atual levaria a cabeça para dentro do corpo
+  const isReverse = newDirection.x === -direction.x && newDirection.y === -direction.y;
+
+  if (isReverse) {
+    return;
+  }
+
+  nextDirection = newDirection;
 });
