@@ -122,14 +122,6 @@ button:focus-visible {
   font-weight: 800;
 }
 
-.start-button:disabled {
-  background: #22252b;
-  color: #8a909a;
-  border-color: #3a3f47;
-  box-shadow: none;
-  cursor: default;
-}
-
 .status {
   min-height: 120px;
   display: flex;

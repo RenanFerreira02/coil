@@ -21,6 +21,9 @@ let lastStepTime = 0;
 // O número do próximo quadro pedido ao navegador; serve para cancelar o loop
 let animationId = 0;
 
+// Em que momento o jogo está: 'ready', 'playing', 'paused' ou 'over'
+let phase = 'ready';
+
 // A cobra do começo da partida: três casas no meio, com a cabeça à direita
 const createSnake = () => {
   return [
@@ -164,19 +167,36 @@ const gameLoop = (timestamp) => {
   }
 };
 
-// Bateu: o loop para e Começar vira "Jogar de novo"
+// Bateu: o loop para e o botão vira "Jogar de novo"
 const endGame = () => {
+  phase = 'over';
   cancelAnimationFrame(animationId);
   best = Math.max(best, points);
   bestValue.textContent = best;
   showStatus('Fim de jogo', `Bateu! Pontos: ${points}.`);
   statusBox.classList.add('is-over');
   startButton.textContent = 'Jogar de novo';
-  startButton.disabled = false;
+};
+
+// Pausa: o loop para, mas a cobra, a fruta e os pontos continuam onde estão
+const pauseGame = () => {
+  phase = 'paused';
+  cancelAnimationFrame(animationId);
+  startButton.textContent = 'Continuar';
+  showStatus('Pausado', 'Aperte Espaço ou Continuar para voltar.');
+};
+
+// Continua de onde parou, pedindo um quadro novo ao navegador
+const resumeGame = () => {
+  phase = 'playing';
+  startButton.textContent = 'Pausar';
+  showStatus('Jogando', 'Coma as frutas e não bata em nada.');
+  animationId = requestAnimationFrame(gameLoop);
 };
 
 // Começa a partida do zero: cobra nova, direção, fruta e pontos
 const startGame = () => {
+  phase = 'playing';
   snake = createSnake();
   direction = { x: 1, y: 0 };
   nextDirection = direction;
@@ -185,16 +205,43 @@ const startGame = () => {
   pointsValue.textContent = points;
   statusBox.classList.remove('is-over');
   showStatus('Jogando', 'Coma as frutas e não bata em nada.');
-  startButton.disabled = true;
+  startButton.textContent = 'Pausar';
   animationId = requestAnimationFrame(gameLoop);
 };
 
 drawBoard();
 
-startButton.addEventListener('click', startGame);
+// O mesmo botão começa, pausa e continua, conforme a fase do jogo
+startButton.addEventListener('click', () => {
+  if (phase === 'playing') {
+    pauseGame();
+  } else if (phase === 'paused') {
+    resumeGame();
+  } else {
+    startGame();
+  }
+});
 
-// Setas e WASD mudam a direção da cobra
+// Espaço pausa; setas e WASD mudam a direção da cobra
 document.addEventListener('keydown', (event) => {
+  // Durante a partida, o Espaço só pausa e continua
+  if (event.key === ' ' && (phase === 'playing' || phase === 'paused')) {
+    // Sem isso, o Espaço também rolaria a página e apertaria de novo o botão em foco
+    event.preventDefault();
+
+    // Segurar o Espaço repete o evento; só o primeiro aperto conta
+    if (!event.repeat) {
+      startButton.click();
+    }
+
+    return;
+  }
+
+  // Fora da partida (ou na pausa), as setas não mexem na cobra
+  if (phase !== 'playing') {
+    return;
+  }
+
   const newDirection = directions[event.key.toLowerCase()];
 
   // Outra tecla qualquer: não é com a cobra
