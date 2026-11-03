@@ -20,8 +20,20 @@ const snake = [
   { x: 7, y: 10 }
 ];
 
-// Para onde a cobra anda: uma casa para a direita a cada passo
-const direction = { x: 1, y: 0 };
+// Para onde a cobra anda: começa indo uma casa para a direita a cada passo
+let direction = { x: 1, y: 0 };
+
+// Cada tecla aponta para uma direção. No canvas, o y cresce para baixo
+const directions = {
+  arrowup: { x: 0, y: -1 },
+  w: { x: 0, y: -1 },
+  arrowdown: { x: 0, y: 1 },
+  s: { x: 0, y: 1 },
+  arrowleft: { x: -1, y: 0 },
+  a: { x: -1, y: 0 },
+  arrowright: { x: 1, y: 0 },
+  d: { x: 1, y: 0 }
+};
 
 // Pinta uma casa: a coordenada em casas vira pixels na hora de desenhar
 const drawCell = (cell, color) => {
@@ -68,4 +80,18 @@ drawBoard();
 startButton.addEventListener('click', () => {
   startButton.disabled = true;
   requestAnimationFrame(gameLoop);
+});
+
+// Setas e WASD mudam a direção da cobra
+document.addEventListener('keydown', (event) => {
+  const newDirection = directions[event.key.toLowerCase()];
+
+  // Outra tecla qualquer: não é com a cobra
+  if (newDirection === undefined) {
+    return;
+  }
+
+  // As setas também rolam a página; aqui elas só guiam a cobra
+  event.preventDefault();
+  direction = newDirection;
 });
