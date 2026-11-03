@@ -7,6 +7,12 @@ const startButton = document.querySelector('.start-button');
 const cellSize = 24;
 const gridSize = 20;
 
+// Tempo entre um passo e outro da cobra, em milissegundos (8 passos por segundo)
+const stepDelay = 125;
+
+// O momento do último passo, em milissegundos desde que a página abriu
+let lastStepTime = 0;
+
 // A cobra é uma lista de casas; a primeira é a cabeça
 const snake = [
   { x: 9, y: 10 },
@@ -43,10 +49,16 @@ const moveSnake = () => {
   snake.pop();
 };
 
-// O game loop: anda, desenha e pede ao navegador para rodar de novo no próximo quadro
-const gameLoop = () => {
-  moveSnake();
-  drawBoard();
+// O game loop: o navegador chama esta função a cada quadro (uns 60 por segundo)
+// e passa o timestamp, a hora daquele quadro em milissegundos
+const gameLoop = (timestamp) => {
+  // A cobra só anda quando já passou o tempo de um passo desde o último
+  if (timestamp - lastStepTime >= stepDelay) {
+    lastStepTime = timestamp;
+    moveSnake();
+    drawBoard();
+  }
+
   requestAnimationFrame(gameLoop);
 };
 
