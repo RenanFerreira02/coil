@@ -141,6 +141,11 @@ button:focus-visible {
   border-radius: 18px;
 }
 
+.status.is-over {
+  background: #2a1b1d;
+  border-color: #ff8a65;
+}
+
 .status-title {
   font-size: 14px;
   font-weight: 600;

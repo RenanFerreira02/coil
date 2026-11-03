@@ -3,6 +3,9 @@ const canvas = document.querySelector('.board');
 const context = canvas.getContext('2d');
 const startButton = document.querySelector('.start-button');
 const pointsValue = document.querySelector('.points-value');
+const statusBox = document.querySelector('.status');
+const statusTitle = document.querySelector('.status-title');
+const statusText = document.querySelector('.status-text');
 
 // Cada casa tem 24 px, e o tabuleiro tem 20 casas de cada lado
 const cellSize = 24;
@@ -14,12 +17,20 @@ const stepDelay = 125;
 // O momento do último passo, em milissegundos desde que a página abriu
 let lastStepTime = 0;
 
+// O número do próximo quadro pedido ao navegador; serve para cancelar o loop
+let animationId = 0;
+
+// A cobra do começo da partida: três casas no meio, com a cabeça à direita
+const createSnake = () => {
+  return [
+    { x: 9, y: 10 },
+    { x: 8, y: 10 },
+    { x: 7, y: 10 }
+  ];
+};
+
 // A cobra é uma lista de casas; a primeira é a cabeça
-const snake = [
-  { x: 9, y: 10 },
-  { x: 8, y: 10 },
-  { x: 7, y: 10 }
-];
+let snake = createSnake();
 
 // Para onde a cobra anda: começa indo uma casa para a direita a cada passo
 let direction = { x: 1, y: 0 };
@@ -66,6 +77,17 @@ let food = placeFood();
 // Cada fruta comida vale um ponto
 let points = 0;
 
+// Diz se a casa está fora do tabuleiro
+const isOutside = (cell) => {
+  return cell.x < 0 || cell.y < 0 || cell.x >= gridSize || cell.y >= gridSize;
+};
+
+// Troca o título e o texto da caixa de mensagens
+const showStatus = (title, text) => {
+  statusTitle.textContent = title;
+  statusText.textContent = text;
+};
+
 // Pinta uma casa: a coordenada em casas vira pixels na hora de desenhar
 const drawCell = (cell, color) => {
   context.fillStyle = color;
@@ -98,6 +120,13 @@ const drawBoard = () => {
 // Um passo: nasce uma cabeça nova na frente, e a ponta da cauda sai
 const moveSnake = () => {
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+  // A cabeça nova sairia do tabuleiro: a cobra bateu na parede
+  if (isOutside(head)) {
+    endGame();
+    return;
+  }
+
   snake.unshift(head);
 
   // Colisão é comparar coordenadas: cabeça na casa da fruta
@@ -114,23 +143,42 @@ const moveSnake = () => {
 // O game loop: o navegador chama esta função a cada quadro (uns 60 por segundo)
 // e passa o timestamp, a hora daquele quadro em milissegundos
 const gameLoop = (timestamp) => {
+  // O próximo quadro é pedido logo no começo: assim o fim de jogo consegue cancelá-lo
+  animationId = requestAnimationFrame(gameLoop);
+
   // A cobra só anda quando já passou o tempo de um passo desde o último
   if (timestamp - lastStepTime >= stepDelay) {
     lastStepTime = timestamp;
     moveSnake();
     drawBoard();
   }
+};
 
-  requestAnimationFrame(gameLoop);
+// Bateu: o loop para e Começar vira "Jogar de novo"
+const endGame = () => {
+  cancelAnimationFrame(animationId);
+  showStatus('Fim de jogo', `Bateu! Pontos: ${points}.`);
+  statusBox.classList.add('is-over');
+  startButton.textContent = 'Jogar de novo';
+  startButton.disabled = false;
+};
+
+// Começa a partida do zero: cobra nova, direção, fruta e pontos
+const startGame = () => {
+  snake = createSnake();
+  direction = { x: 1, y: 0 };
+  food = placeFood();
+  points = 0;
+  pointsValue.textContent = points;
+  statusBox.classList.remove('is-over');
+  showStatus('Jogando', 'Coma as frutas e não bata em nada.');
+  startButton.disabled = true;
+  animationId = requestAnimationFrame(gameLoop);
 };
 
 drawBoard();
 
-// Começar liga o loop uma vez só
-startButton.addEventListener('click', () => {
-  startButton.disabled = true;
-  requestAnimationFrame(gameLoop);
-});
+startButton.addEventListener('click', startGame);
 
 // Setas e WASD mudam a direção da cobra
 document.addEventListener('keydown', (event) => {
