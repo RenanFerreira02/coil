@@ -1,0 +1,226 @@
+/* Cores que se repetem pela página */
+:root {
+  --color-background: #121417;
+  --color-panel: #1b1e23;
+  --color-border: #2a2e35;
+  --color-text: #f2efe9;
+  --color-muted: #b9bec7;
+  --color-dark-text: #16181c;
+  --color-focus: #7cc4ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: 'Archivo', sans-serif;
+}
+
+p,
+h1,
+ul {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Cabeçalho */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.title {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: var(--color-muted);
+}
+
+.keys-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+/* Tabuleiro e coluna lateral lado a lado */
+.layout {
+  display: flex;
+  gap: 32px;
+}
+
+.board-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+}
+
+/* O canvas tem 480 px de desenho; a moldura fica por fora */
+.board {
+  display: block;
+  padding: 6px;
+  background: #0e1013;
+  border: 2px solid #3a3f47;
+  border-radius: 10px;
+}
+
+/* Coluna lateral */
+.sidebar {
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.start-button {
+  padding: 18px 24px;
+  background: var(--color-text);
+  color: var(--color-dark-text);
+  border: 2px solid var(--color-text);
+  border-radius: 18px;
+  box-shadow: 0 5px 0 #0c0d10;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.status {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: var(--color-panel);
+  border: 2px solid var(--color-border);
+  border-radius: 18px;
+}
+
+.status-title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.status-text {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.score {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.score-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+}
+
+.score-label {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.score-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Legenda: forma e claridade, não só cor */
+.legend {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.swatch {
+  width: 18px;
+  height: 18px;
+}
+
+.swatch-head {
+  background: #d9f99d;
+}
+
+.swatch-body {
+  background: #65a30d;
+}
+
+.swatch-food {
+  border-radius: 50%;
+  background: #ff9f43;
+}
+
+.rules {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* Rodapé */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--color-muted);
+}

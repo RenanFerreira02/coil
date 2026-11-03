@@ -4,7 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@700&display=swap">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="page">
+    <header class="header">
+      <div class="intro">
+        <h1 class="title">Coil</h1>
+        <p class="subtitle">Guie a cobrinha até as frutas. Cada fruta deixa ela maior.</p>
+      </div>
+      <p class="keys-hint">Setas ou WASD · Espaço pausa</p>
+    </header>
+
+    <div class="layout">
+      <main class="board-panel">
+        <canvas class="board" width="480" height="480" role="img" aria-label="Tabuleiro do jogo da cobrinha. Pontos e mensagens aparecem ao lado."></canvas>
+      </main>
+
+      <aside class="sidebar">
+        <button type="button" class="start-button">Começar</button>
+
+        <section class="status" aria-live="polite">
+          <p class="status-title">Pronto</p>
+          <p class="status-text">Aperte Começar e use as setas ou WASD.</p>
+        </section>
+
+        <section class="score">
+          <div class="score-item">
+            <span class="score-label">Pontos</span>
+            <span class="score-value points-value">0</span>
+          </div>
+          <div class="score-item">
+            <span class="score-label">Recorde</span>
+            <span class="score-value best-value">0</span>
+          </div>
+        </section>
+
+        <ul class="legend">
+          <li class="legend-item"><span class="swatch swatch-head"></span>Cabeça da cobra (quadrada, mais clara)</li>
+          <li class="legend-item"><span class="swatch swatch-body"></span>Corpo da cobra (quadrados)</li>
+          <li class="legend-item"><span class="swatch swatch-food"></span>Fruta (redonda): vale 1 ponto</li>
+        </ul>
+
+        <p class="rules">Bater na borda ou no próprio corpo termina o jogo. O recorde vale enquanto a página estiver aberta.</p>
+      </aside>
+    </div>
+
+    <footer class="footer">
+      <p>Tabuleiro de 20 × 20 casas, desenhado num canvas de 480 px.</p>
+      <p>Sons gerados no código com a Web Audio API.</p>
+    </footer>
+  </div>
 </body>
 </html>
