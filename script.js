@@ -121,8 +121,8 @@ const drawBoard = () => {
 const moveSnake = () => {
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-  // A cabeça nova sairia do tabuleiro: a cobra bateu na parede
-  if (isOutside(head)) {
+  // A cabeça nova sairia do tabuleiro ou cairia no corpo: a cobra bateu
+  if (isOutside(head) || isOnSnake(head)) {
     endGame();
     return;
   }
