@@ -3,6 +3,7 @@ const canvas = document.querySelector('.board');
 const context = canvas.getContext('2d');
 const startButton = document.querySelector('.start-button');
 const pointsValue = document.querySelector('.points-value');
+const bestValue = document.querySelector('.best-value');
 const statusBox = document.querySelector('.status');
 const statusTitle = document.querySelector('.status-title');
 const statusText = document.querySelector('.status-text');
@@ -79,6 +80,9 @@ let food = placeFood();
 
 // Cada fruta comida vale um ponto
 let points = 0;
+
+// A maior pontuação desde que a página abriu
+let best = 0;
 
 // Diz se a casa está fora do tabuleiro
 const isOutside = (cell) => {
@@ -163,6 +167,8 @@ const gameLoop = (timestamp) => {
 // Bateu: o loop para e Começar vira "Jogar de novo"
 const endGame = () => {
   cancelAnimationFrame(animationId);
+  best = Math.max(best, points);
+  bestValue.textContent = best;
   showStatus('Fim de jogo', `Bateu! Pontos: ${points}.`);
   statusBox.classList.add('is-over');
   startButton.textContent = 'Jogar de novo';
