@@ -35,19 +35,56 @@ const directions = {
   d: { x: 1, y: 0 }
 };
 
+// Sorteia uma casa qualquer do tabuleiro
+const randomCell = () => {
+  return {
+    x: Math.floor(Math.random() * gridSize),
+    y: Math.floor(Math.random() * gridSize)
+  };
+};
+
+// Diz se a casa está ocupada por alguma parte da cobra
+const isOnSnake = (cell) => {
+  return snake.some((part) => part.x === cell.x && part.y === cell.y);
+};
+
+// Sorteia de novo até cair numa casa livre
+const placeFood = () => {
+  let cell = randomCell();
+
+  while (isOnSnake(cell)) {
+    cell = randomCell();
+  }
+
+  return cell;
+};
+
+// A fruta nasce numa casa livre
+const food = placeFood();
+
 // Pinta uma casa: a coordenada em casas vira pixels na hora de desenhar
 const drawCell = (cell, color) => {
   context.fillStyle = color;
   context.fillRect(cell.x * cellSize + 1, cell.y * cellSize + 1, cellSize - 2, cellSize - 2);
 };
 
-// Desenha o tabuleiro inteiro: as casas vazias e, por cima, a cobra
+// A fruta é um círculo no centro da casa: arc desenha o contorno e fill pinta
+const drawFood = () => {
+  context.fillStyle = '#ff9f43';
+  context.beginPath();
+  context.arc(food.x * cellSize + cellSize / 2, food.y * cellSize + cellSize / 2, 8, 0, Math.PI * 2);
+  context.fill();
+};
+
+// Desenha o tabuleiro inteiro: as casas vazias e, por cima, a fruta e a cobra
 const drawBoard = () => {
   for (let y = 0; y < gridSize; y = y + 1) {
     for (let x = 0; x < gridSize; x = x + 1) {
       drawCell({ x: x, y: y }, '#15181c');
     }
   }
+
+  drawFood();
 
   snake.forEach((cell, index) => {
     drawCell(cell, index === 0 ? '#d9f99d' : '#65a30d');
