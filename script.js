@@ -24,6 +24,9 @@ let animationId = 0;
 // Em que momento o jogo está: 'ready', 'playing', 'paused' ou 'over'
 let phase = 'ready';
 
+// O contexto de áudio só é criado no primeiro Começar (regra dos navegadores)
+let audioContext = null;
+
 // A cobra do começo da partida: três casas no meio, com a cabeça à direita
 const createSnake = () => {
   return [
@@ -92,6 +95,26 @@ const isOutside = (cell) => {
   return cell.x < 0 || cell.y < 0 || cell.x >= gridSize || cell.y >= gridSize;
 };
 
+// Toca um tom curto: frequência em hertz e duração em segundos (o mesmo do Echo)
+const playTone = (frequency, duration) => {
+  const oscillator = audioContext.createOscillator();
+  const volume = audioContext.createGain();
+  const now = audioContext.currentTime;
+
+  oscillator.type = 'triangle';
+  oscillator.frequency.value = frequency;
+
+  // O volume desce até 0 antes de parar, para o som não terminar com um estalo
+  volume.gain.setValueAtTime(0.3, now);
+  volume.gain.linearRampToValueAtTime(0, now + duration);
+
+  oscillator.connect(volume);
+  volume.connect(audioContext.destination);
+
+  oscillator.start(now);
+  oscillator.stop(now + duration);
+};
+
 // Troca o título e o texto da caixa de mensagens
 const showStatus = (title, text) => {
   statusTitle.textContent = title;
@@ -148,6 +171,7 @@ const moveSnake = () => {
     points = points + 1;
     pointsValue.textContent = points;
     food = placeFood();
+    playTone(880, 0.12);
   } else {
     snake.pop();
   }
@@ -171,6 +195,7 @@ const gameLoop = (timestamp) => {
 const endGame = () => {
   phase = 'over';
   cancelAnimationFrame(animationId);
+  playTone(140, 0.5);
   best = Math.max(best, points);
   bestValue.textContent = best;
   showStatus('Fim de jogo', `Bateu! Pontos: ${points}.`);
@@ -196,6 +221,11 @@ const resumeGame = () => {
 
 // Começa a partida do zero: cobra nova, direção, fruta e pontos
 const startGame = () => {
+  // O clique em Começar é a interação que o navegador exige para liberar o som
+  if (audioContext === null) {
+    audioContext = new AudioContext();
+  }
+
   phase = 'playing';
   snake = createSnake();
   direction = { x: 1, y: 0 };
