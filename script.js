@@ -2,6 +2,7 @@
 const canvas = document.querySelector('.board');
 const context = canvas.getContext('2d');
 const startButton = document.querySelector('.start-button');
+const pointsValue = document.querySelector('.points-value');
 
 // Cada casa tem 24 px, e o tabuleiro tem 20 casas de cada lado
 const cellSize = 24;
@@ -60,7 +61,10 @@ const placeFood = () => {
 };
 
 // A fruta nasce numa casa livre
-const food = placeFood();
+let food = placeFood();
+
+// Cada fruta comida vale um ponto
+let points = 0;
 
 // Pinta uma casa: a coordenada em casas vira pixels na hora de desenhar
 const drawCell = (cell, color) => {
@@ -95,7 +99,16 @@ const drawBoard = () => {
 const moveSnake = () => {
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
   snake.unshift(head);
-  snake.pop();
+
+  // Colisão é comparar coordenadas: cabeça na casa da fruta
+  if (head.x === food.x && head.y === food.y) {
+    // Comeu: a cauda fica (a cobra cresce), soma um ponto e a fruta muda de lugar
+    points = points + 1;
+    pointsValue.textContent = points;
+    food = placeFood();
+  } else {
+    snake.pop();
+  }
 };
 
 // O game loop: o navegador chama esta função a cada quadro (uns 60 por segundo)
